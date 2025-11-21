@@ -1,0 +1,29 @@
+postgres:
+  name: postgres
+  image:
+    repository: postgres
+    tag: "15"
+    pullPolicy: IfNotPresent
+  
+  replicas: 1
+  
+  # Database configuration
+  database:
+    name: postgres
+  
+  # Credentials
+  credentials:
+    username: root
+    password: mypassword
+  
+  # Service configuration
+  service:
+    name: postgres-svc
+    port: 5432
+  
+  # Storage configuration
+  persistence:
+    enabled: true
+    storageClass: "" 
+    size: 10Gi
+    accessMode: ReadWriteOnce

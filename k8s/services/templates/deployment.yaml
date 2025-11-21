@@ -1,0 +1,70 @@
+{{- range $serviceName, $service := .Values.services }}
+{{- if $service.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $service.name }}-deployment
+  labels:
+    app: {{ $service.name }}
+spec:
+  replicas: {{ $service.replicas }}
+  selector:
+    matchLabels:
+      app: {{ $service.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ $service.name }}
+    spec:
+      containers:
+      - name: {{ $service.name }}
+        image: "{{ $service.image.repository }}:{{ $service.image.tag }}"
+        imagePullPolicy: {{ $service.image.pullPolicy }}
+        ports:
+        - containerPort: {{ $service.service.targetPort }}
+        {{- if $service.database.enabled }}
+        env:
+        - name: DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: {{ $.Values.global.postgresSecret }}
+              key: postgres-root-username
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ $.Values.global.postgresSecret }}
+              key: postgres-root-password
+        - name: ConnectionStrings__DefaultConnection
+          value: "User ID=$(DB_USERNAME);Password=$(DB_PASSWORD);Server={{ $.Values.global.database.host }};Port={{ $.Values.global.database.port }};Database={{ $service.database.name }};"
+        - name: INIT_DATABASE
+          value: "{{ $service.database.initDatabase | default "false" }}"
+        {{- end }}
+        {{- if $service.healthCheck.enabled }}
+        readinessProbe:
+          httpGet:
+            path: {{ $service.healthCheck.path }}
+            port: {{ $service.service.targetPort }}
+          initialDelaySeconds: {{ $service.healthCheck.readinessProbe.initialDelaySeconds }}
+          periodSeconds: {{ $service.healthCheck.readinessProbe.periodSeconds }}
+          timeoutSeconds: {{ $service.healthCheck.readinessProbe.timeoutSeconds }}
+          failureThreshold: {{ $service.healthCheck.readinessProbe.failureThreshold }}
+        livenessProbe:
+          httpGet:
+            path: {{ $service.healthCheck.path }}
+            port: {{ $service.service.targetPort }}
+          initialDelaySeconds: {{ $service.healthCheck.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ $service.healthCheck.livenessProbe.periodSeconds }}
+          timeoutSeconds: {{ $service.healthCheck.livenessProbe.timeoutSeconds }}
+          failureThreshold: {{ $service.healthCheck.livenessProbe.failureThreshold }}
+        {{- end }}
+        volumeMounts:
+        - name: config-volume
+          mountPath: /app/appsettings.json
+          subPath: appsettings.json
+      volumes:
+      - name: config-volume
+        configMap:
+          name: {{ $service.name }}-config
+{{- end }}
+{{- end }}

@@ -1,0 +1,124 @@
+global:
+  postgresSecret: postgres-secret
+  database:
+    host: postgres-svc
+    port: 5432
+
+services:
+  library-service:
+    enabled: true
+    name: library-service
+    image:
+      repository: xom4ik/library-service
+      tag: latest
+      pullPolicy: IfNotPresent
+    replicas: 1
+    service:
+      type: NodePort
+      port: 80
+      targetPort: 8060
+    database:
+      enabled: true
+      name: LibraryServiceDb
+      initDatabase: true
+    healthCheck:
+      enabled: true
+      path: /manage/health
+      readinessProbe:
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        timeoutSeconds: 5
+        failureThreshold: 3
+      livenessProbe:
+        initialDelaySeconds: 30
+        periodSeconds: 30
+        timeoutSeconds: 5
+        failureThreshold: 3
+
+  rating-service:
+    enabled: true
+    name: rating-service
+    image:
+      repository: xom4ik/rating-service
+      tag: latest
+      pullPolicy: IfNotPresent
+    replicas: 1
+    service:
+      type: NodePort
+      port: 80
+      targetPort: 8050
+    database:
+      enabled: true
+      name: RatingServiceDb
+      initDatabase: true
+    healthCheck:
+      enabled: true
+      path: /manage/health
+      readinessProbe:
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        timeoutSeconds: 5
+        failureThreshold: 3
+      livenessProbe:
+        initialDelaySeconds: 30
+        periodSeconds: 30
+        timeoutSeconds: 5
+        failureThreshold: 3
+
+  reservation-service:
+    enabled: true
+    name: reservation-service
+    image:
+      repository: xom4ik/reservation-service
+      tag: latest
+      pullPolicy: IfNotPresent
+    replicas: 1
+    service:
+      type: NodePort
+      port: 80
+      targetPort: 8070
+    database:
+      enabled: true
+      name: ReservationServiceDb
+      initDatabase: true
+    healthCheck:
+      enabled: true
+      path: /manage/health
+      readinessProbe:
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        timeoutSeconds: 5
+        failureThreshold: 3
+      livenessProbe:
+        initialDelaySeconds: 30
+        periodSeconds: 30
+        timeoutSeconds: 5
+        failureThreshold: 3
+
+  gateway-service:
+    enabled: true
+    name: gateway-service
+    image:
+      repository: xom4ik/gateway-service
+      tag: latest
+      pullPolicy: IfNotPresent
+    replicas: 1
+    service:
+      type: NodePort
+      port: 80
+      targetPort: 8080
+    database:
+      enabled: false
+    healthCheck:
+      enabled: true
+      path: /manage/health
+      readinessProbe:
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        timeoutSeconds: 5
+        failureThreshold: 3
+      livenessProbe:
+        initialDelaySeconds: 30
+        periodSeconds: 30
+        timeoutSeconds: 5
+        failureThreshold: 3

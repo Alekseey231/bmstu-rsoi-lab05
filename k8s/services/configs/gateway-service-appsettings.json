@@ -1,0 +1,43 @@
+{
+  "Serilog": {
+    "Using": [
+      "Serilog.Sinks.Console"
+    ],
+    "MinimumLevel": {
+      "Default": "Debug",
+      "Override": {
+        "Microsoft": "Information",
+        "System": "Warning"
+      }
+    },
+    "WriteTo": [
+      {
+        "Name": "Console",
+        "Args": {
+          "outputTemplate": "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} <s:{SourceContext}>{NewLine}{Exception}"
+        }
+      }
+    ]
+  },
+  "HttpClientConfig": {
+    "LibraryServiceUrl": "http://library-service-svc:80",
+    "RatingServiceUrl": "http://rating-service-svc:80",
+    "ReservationServiceUrl": "http://reservation-service-svc:80"
+  },
+  "CircuitBreakerConfig": {
+    "Services": {
+      "LibraryService": {
+        "FailureThreshold": 5,
+        "BreakDurationSeconds": 1
+      },
+      "RatingService": {
+        "FailureThreshold": 5,
+        "BreakDurationSeconds": 1
+      },
+      "ReservationService": {
+        "FailureThreshold": 5,
+        "BreakDurationSeconds": 1
+      }
+    }
+  }
+}

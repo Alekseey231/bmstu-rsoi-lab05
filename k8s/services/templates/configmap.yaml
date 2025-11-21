@@ -1,0 +1,14 @@
+{{- range $serviceName, $service := .Values.services }}
+{{- if $service.enabled }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $service.name }}-config
+  labels:
+    app: {{ $service.name }}
+data:
+  appsettings.json: |
+{{ $.Files.Get (printf "configs/%s-appsettings.json" $service.name) | indent 4 }}
+{{- end }}
+{{- end }}
