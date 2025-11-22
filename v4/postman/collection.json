@@ -44,7 +44,7 @@
 									"type": "text"
 								},
 								{
-									"key": "grant_type",
+									"key": "grantType",
 									"value": "password",
 									"type": "text"
 								},

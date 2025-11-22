@@ -11,7 +11,7 @@ services:
     image:
       repository: xom4ik/library-service
       tag: latest
-      pullPolicy: IfNotPresent
+      pullPolicy: Always
     replicas: 1
     service:
       type: NodePort
@@ -41,7 +41,7 @@ services:
     image:
       repository: xom4ik/rating-service
       tag: latest
-      pullPolicy: IfNotPresent
+      pullPolicy: Always
     replicas: 1
     service:
       type: NodePort
@@ -71,7 +71,7 @@ services:
     image:
       repository: xom4ik/reservation-service
       tag: latest
-      pullPolicy: IfNotPresent
+      pullPolicy: Always
     replicas: 1
     service:
       type: NodePort
@@ -101,7 +101,7 @@ services:
     image:
       repository: xom4ik/gateway-service
       tag: latest
-      pullPolicy: IfNotPresent
+      pullPolicy: Always
     replicas: 1
     service:
       type: NodePort
