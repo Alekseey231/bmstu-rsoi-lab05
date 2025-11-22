@@ -1,23 +1,14 @@
-keycloak:
-  enabled: true
-  name: "keycloak-service"
-  replicaCount: 1
-  
-  adminUser: "admin"
-  adminPassword: "admin"
-  
-  image:
-    repository: "quay.io/keycloak/keycloak"
-    tag: "26.3.2"
-  
-  service:
-    type: "NodePort"
-    nodePort: 30080
-  
-  resources:
-    requests:
-      memory: "512Mi"
-      cpu: "250m"
-    limits:
-      memory: "1Gi"
-      cpu: "500m"
+enabled: true
+name: "keycloak-service"
+replicaCount: 1
+
+adminUser: "admin"
+adminPassword: "admin"
+
+image:
+  repository: "quay.io/keycloak/keycloak"
+  tag: "26.3.2"
+
+service:
+  type: "NodePort"
+  nodePort: 30080

@@ -1,15 +1,15 @@
-{{- if .Values.keycloak.enabled }}
+{{- if .Values.enabled }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.keycloak.name }}-svc
+  name: {{ .Values.name }}-svc
 spec:
   selector:
-    app: {{ .Values.keycloak.name }}
+    app: {{ .Values.name }}
   ports:
   - port: 8080
     targetPort: 8080
-    nodePort: {{ .Values.keycloak.service.nodePort }}
-  type: {{ .Values.keycloak.service.type }}
+    nodePort: {{ .Values.service.nodePort }}
+  type: {{ .Values.service.type }}
 {{- end }}

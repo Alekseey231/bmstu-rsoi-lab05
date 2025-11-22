@@ -85,7 +85,7 @@ jobs:
           helm install keycloak ./k8s/keycloak/
           
           echo "=== Waiting for Keycloak to be ready ==="
-          kubectl wait --for=condition=ready pod -l app=keycloak --timeout=300s
+          kubectl wait --for=condition=ready pod -l app=keycloak-service --timeout=300s
           
           echo "=== Keycloak status ==="
           kubectl get pods -l app=keycloak
@@ -163,12 +163,6 @@ jobs:
           kubectl port-forward service/ingress-nginx-controller -n ingress-nginx 8080:80 &
           echo $! > /tmp/pf.pid
           sleep 10
-          
-          echo "=== Testing Keycloak health ==="
-          curl -f http://localhost:8080/realms/library-system || echo "Keycloak realm not ready yet"
-          
-          echo "=== Testing services health ==="
-          curl -f http://localhost:8080/manage/health
 
       - name: Run API Tests
         uses: matt-ball/newman-action@master

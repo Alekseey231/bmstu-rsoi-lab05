@@ -1,11 +1,11 @@
-{{- if .Values.keycloak.enabled }}
+{{- if .Values.enabled }}
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Values.keycloak.name }}-realm-config
+  name: {{ .Values.name }}-realm-config
   labels:
-    app: {{ .Values.keycloak.name }}
+    app: {{ .Values.name }}
 data:
   realm-config.json: |
 {{ $.Files.Get "configs/keycloak-realm.json" | indent 4 }}
