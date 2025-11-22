@@ -1,22 +1,16 @@
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace LibraryService.Dto.Http;
 
-[DataContract]
 public class AuthorizeRequest
 {
-    [Required]
-    [DataMember(Name = "username")]
     public string Username { get; set; }
-    
-    [Required]
-    [DataMember(Name = "password")]
     public string Password { get; set; }
-
-    public AuthorizeRequest(string username, string password)
-    {
-        Username = username;
-        Password = password;
-    }
+    
+    public string GrantType { get; set; }
+    public string Scope { get; set; }
+    public string ClientId { get; set; }
+    public string ClientSecret { get; set; }
 }

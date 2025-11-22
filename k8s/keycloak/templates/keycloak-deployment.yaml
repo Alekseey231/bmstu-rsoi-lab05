@@ -1,0 +1,46 @@
+{{- if .Values.keycloak.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.keycloak.name }}
+  labels:
+    app: {{ .Values.keycloak.name }}
+spec:
+  replicas: {{ .Values.keycloak.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.keycloak.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.keycloak.name }}
+    spec:
+      containers:
+      - name: {{ .Values.keycloak.name }}
+        image: "{{ .Values.keycloak.image.repository }}:{{ .Values.keycloak.image.tag }}"
+        command: 
+          - "/bin/bash"
+          - "-c"
+          - |
+            /opt/keycloak/bin/kc.sh start-dev --import-realm
+        env:
+        - name: KEYCLOAK_ADMIN
+          value: "{{ .Values.keycloak.adminUser }}"
+        - name: KEYCLOAK_ADMIN_PASSWORD
+          value: "{{ .Values.keycloak.adminPassword }}"
+        - name: KEYCLOAK_IMPORT
+          value: "/opt/keycloak/data/import/realm-config.json"
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: realm-config
+          mountPath: /opt/keycloak/data/import
+          readOnly: true
+        resources:
+          {{- toYaml .Values.keycloak.resources | nindent 12 }}
+      volumes:
+      - name: realm-config
+        configMap:
+          name: {{ .Values.keycloak.name }}-realm-config
+{{- end }}

@@ -1,25 +1,180 @@
-name: GitHub Classroom Workflow
+name: Microservices CI
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
 jobs:
   build:
-    name: Autograding
+    name: Build Services
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service:
+          - { name: 'gateway', path: 'GatewayService' }
+          - { name: 'library', path: 'LibraryService' }
+          - { name: 'rating', path: 'RatingService' }
+          - { name: 'reservation', path: 'ReservationService' }
+    
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v4
         with:
-          fetch-depth: 0
+          dotnet-version: '8.0.x'
 
-      - uses: docker/setup-buildx-action@v2
+      - name: Run Unit Tests
+        run: |
+          cd services/${{ matrix.service.path }}
+          if [ -d "src/Tests" ]; then
+            dotnet test src/${{ matrix.service.path }}.sln
+          else
+            echo "No tests found for ${{ matrix.service.name }}, skipping..."
+          fi
 
-      # TODO build, publish to docker hub, deploy to k8s
+      - name: Publish .NET application
+        run: |
+          cd services/${{ matrix.service.path }}
+          dotnet publish src/${{ matrix.service.path }}.Server/${{ matrix.service.path }}.Server.csproj \
+            -c Release \
+            -o ${{ matrix.service.path }}Publish/
+
+      - name: Auth Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: services/${{ matrix.service.path }}
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: xom4ik/${{ matrix.service.name }}-service:latest
+          cache-from: type=registry,ref=xom4ik/${{ matrix.service.name }}-service:latest
+          cache-to: type=inline
+
+  deploy:
+    name: Deploy to Minikube
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Minikube
+        uses: manusa/actions-setup-minikube@v2.14.0
+        with:
+          minikube version: 'v1.32.0'
+          kubernetes version: 'v1.28.0'
+          driver: docker
+
+      - name: Start Minikube
+        run: |
+          minikube start
+          minikube addons enable ingress
+
+      - name: Install Keycloak
+        run: |
+          echo "=== Installing Keycloak ==="
+          helm install keycloak ./k8s/keycloak/
+          
+          echo "=== Waiting for Keycloak to be ready ==="
+          kubectl wait --for=condition=ready pod -l app=keycloak --timeout=300s
+          
+          echo "=== Keycloak status ==="
+          kubectl get pods -l app=keycloak
+          echo "Keycloak is ready"
+
+      - name: Install Database
+        run: |
+          echo "=== Installing database ==="
+          helm install database ./k8s/db/
+          
+          echo "=== Database pods status ==="
+          kubectl get pods -l app=postgres -o wide
+          
+          echo "=== Waiting for database ==="
+          kubectl wait --for=condition=ready pod -l app=postgres --timeout=300s
+          
+          echo "Database is ready"
+
+      - name: Install Services
+        run: |
+          echo "=== Installing services ==="
+          helm install services ./k8s/services/
+
+          wait_for_service() {
+            local service=$1
+            echo "=== Waiting for $service ==="
+            kubectl wait --for=condition=ready pod -l app=$service --timeout=180s
+            echo "$service is ready"
+          }
+
+          wait_for_service "gateway-service"
+          wait_for_service "library-service"  
+          wait_for_service "rating-service"
+          wait_for_service "reservation-service"
+
+          echo "=== All services status ==="
+          kubectl get pods -l app
+
+      - name: Install Ingress
+        run: |
+          kubectl apply -f ./k8s/ingress.yaml
+
+      - name: Wait for Ingress to get address
+        run: |
+          echo "Waiting for Ingress to be assigned an address..."
+          
+          for i in {1..30}; do 
+            echo "Attempt $i: Checking Ingress status..."
+            
+            INGRESS_ADDRESS=$(kubectl get ingress -o jsonpath='{.items[0].status.loadBalancer.ingress[0].ip}' 2>/dev/null)
+            
+            if [ -z "$INGRESS_ADDRESS" ]; then
+              INGRESS_ADDRESS=$(kubectl get ingress -o jsonpath='{.items[0].status.loadBalancer.ingress[0].hostname}' 2>/dev/null)
+            fi
+            
+            if [ -n "$INGRESS_ADDRESS" ]; then
+              echo "Ingress is ready! Address: $INGRESS_ADDRESS"
+              break
+            fi
+            
+            echo "Ingress address not yet assigned, waiting 10 seconds..."
+            sleep 10
+            
+            if [ $i -eq 30 ]; then
+              echo "Timeout waiting for Ingress address after 5 minutes"
+              echo "=== Current Ingress status ==="
+              kubectl describe ingress
+              exit 1
+            fi
+          done
+        
+      - name: Setup port-forward for tests
+        run: |
+          echo "Starting port-forward to ingress on port 8080..."
+          kubectl port-forward service/ingress-nginx-controller -n ingress-nginx 8080:80 &
+          echo $! > /tmp/pf.pid
+          sleep 10
+          
+          echo "=== Testing Keycloak health ==="
+          curl -f http://localhost:8080/realms/library-system || echo "Keycloak realm not ready yet"
+          
+          echo "=== Testing services health ==="
+          curl -f http://localhost:8080/manage/health
 
       - name: Run API Tests
         uses: matt-ball/newman-action@master
         with:
-          collection: <variant>/postman/collection.json
-          environment: <variant>/postman/environment.json
+          collection: v4/postman/collection.json
+          environment: v4/postman/environment.json
           delayRequest: 100
           reporters: '[ "cli" ]'
 
@@ -36,3 +191,34 @@ jobs:
           user_column: 'D'
           column_offset: 'F'
           mark: "'+"
+          continue-on-error: true
+
+      - name: Show logs
+        if: failure()
+        run: |
+          echo "=== Keycloak logs ==="
+          kubectl logs -l app=keycloak --tail=50
+          
+          echo "=== Database logs ==="
+          kubectl logs -l app=postgres --tail=50
+          
+          for pod in $(kubectl get pods -l app -o jsonpath='{.items[*].metadata.name}'); do
+            echo "=== Logs for pod: $pod ==="
+            kubectl logs $pod --tail=50
+            echo "=== End logs for $pod ==="
+            echo
+          done
+
+      - name: Stop port-forward
+        if: always()
+        run: |
+          if [ -f /tmp/pf.pid ]; then
+            kill $(cat /tmp/pf.pid) 2>/dev/null || true
+            rm -f /tmp/pf.pid
+          fi
+
+      - name: Stop Minikube
+        if: always()
+        run: |
+          echo "Stopping Minikube..."
+          minikube stop

@@ -1,11 +1,14 @@
 using System.Reflection;
+using GatewayService.Clients;
 using GatewayService.Server.Extensions;
 using GatewayService.Server.Handlers;
+using GatewayService.Services.KeycloakAuthService;
 using GatewayService.Services.RequestsProcessingBackgroundService.Extensions;
 using GatewayService.Services.RequestsQueue.Extensions;
 using LibrarySystem.Helpers.Auth.Extensions;
 using LibrarySystem.Helpers.Auth.Services.Extensions;
 using Microsoft.OpenApi.Models;
+using Refit;
 
 namespace GatewayService.Server;
 
@@ -28,6 +31,11 @@ public class Startup
         
         services.AddRequestsBackgroundServices();
         services.AddRequestsQueues();
+        
+        var keycloakBaseUrl = Configuration["Authentication:Authority"]!;
+        services.AddRefitClient<IKeycloakClient>()
+            .ConfigureHttpClient(c => c.BaseAddress = new Uri(keycloakBaseUrl));
+        services.AddScoped<IKeycloakAuthService, KeycloakAuthService>();
         
         services.AddRefitClients(Configuration);
         services.AddControllers().AddNewtonsoftJson();

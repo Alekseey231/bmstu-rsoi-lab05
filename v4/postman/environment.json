@@ -4,32 +4,32 @@
   "values": [
     {
       "key": "serviceUrl",
-      "value": "",
+      "value": "http://localhost:8080",
       "enabled": true
     },
     {
       "key": "identityProviderUrl",
-      "value": "",
+      "value": "http://localhost:8080/api/v1",
       "enabled": true
     },
     {
       "key": "username",
-      "value": "",
+      "value": "testuser",
       "enabled": true
     },
     {
       "key": "password",
-      "value": "",
+      "value": "password123",
       "enabled": true
     },
     {
       "key": "clientId",
-      "value": "",
+      "value": "library-client",
       "enabled": true
     },
     {
       "key": "clientSecret",
-      "value": "",
+      "value": "my-predefined-secret-key-12345",
       "enabled": true
     }
   ],

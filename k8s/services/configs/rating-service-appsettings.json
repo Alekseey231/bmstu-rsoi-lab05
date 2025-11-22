@@ -25,5 +25,10 @@
         "Url": "http://0.0.0.0:8050"
       }
     }
+  },
+  "Authentication": {
+    "Authority": "http://keycloak-service-svc:8080/realms/library-system",
+    "ValidateAudience": false,
+    "RequireHttpsMetadata": false
   }
 }

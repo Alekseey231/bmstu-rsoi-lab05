@@ -39,5 +39,10 @@
         "BreakDurationSeconds": 1
       }
     }
+  },
+  "Authentication": {
+    "Authority": "http://keycloak-service-svc:8080/realms/library-system",
+    "ValidateAudience": false,
+    "RequireHttpsMetadata": false
   }
 }
