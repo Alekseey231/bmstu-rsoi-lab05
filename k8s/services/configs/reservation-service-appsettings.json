@@ -7,7 +7,7 @@
       "Default": "Debug",
       "Override": {
         "Microsoft": "Information",
-        "System": "Warning"
+        "System": "Warning" 
       }
     },
     "WriteTo": [
