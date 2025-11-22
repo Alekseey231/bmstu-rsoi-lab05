@@ -84,12 +84,10 @@ jobs:
           echo "=== Installing Keycloak ==="
           helm install keycloak ./k8s/keycloak/
           
+          kubectl get pods --show-labels
+
           echo "=== Waiting for Keycloak to be ready ==="
           kubectl wait --for=condition=ready pod -l app=keycloak-service --timeout=300s
-          
-          echo "=== Keycloak status ==="
-          kubectl get pods -l app=keycloak
-          echo "Keycloak is ready"
 
       - name: Install Database
         run: |
