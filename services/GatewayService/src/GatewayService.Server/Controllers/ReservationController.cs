@@ -10,6 +10,7 @@ using GatewayService.Dto.Http.Converters;
 using GatewayService.Dto.Http.Converters.Enums;
 using GatewayService.Services.CircuitBreaker.Exceptions;
 using LibraryService.Dto.Http.Models;
+using LibrarySystem.Helpers.Auth.Services;
 using Microsoft.AspNetCore.Mvc;
 using RatingService.Dto.Http;
 using RatingService.Dto.Http.Models;
@@ -24,6 +25,7 @@ namespace GatewayService.Server.Controllers;
 
 [ApiController]
 [Route("/api/v1/reservations")]
+[Microsoft.AspNetCore.Authorization.Authorize]
 public class ReservationController : ControllerBase
 {
     private readonly IReservationServiceClient _reservationServiceRequestClient;
@@ -31,6 +33,7 @@ public class ReservationController : ControllerBase
     private readonly ILibraryServiceClient _libraryServiceRequestClient;
     private readonly ILibraryServiceRequestsQueue _libraryServiceRequestsQueue;
     private readonly IRatingServiceRequestsQueue _ratingServiceRequestsQueue;
+    private readonly IUserService _userService;
     private readonly ILogger<ReservationController> _logger;
 
     public ReservationController(IReservationServiceClient reservationServiceRequestClient,
@@ -38,6 +41,7 @@ public class ReservationController : ControllerBase
         IRatingServiceRequestsQueue ratingServiceRequestsQueue,
         IRatingServiceClient ratingServiceRequestClient,
         ILibraryServiceClient libraryServiceRequestClient,
+        IUserService userService,
         ILogger<ReservationController> logger)
     {
         _libraryServiceRequestsQueue = libraryServiceRequestsQueue;
@@ -45,6 +49,7 @@ public class ReservationController : ControllerBase
         _ratingServiceRequestClient = ratingServiceRequestClient;
         _reservationServiceRequestClient = reservationServiceRequestClient;
         _libraryServiceRequestClient = libraryServiceRequestClient;
+        _userService = userService;
         _logger = logger;
     }
 
@@ -52,10 +57,15 @@ public class ReservationController : ControllerBase
     [SwaggerOperation("Получить информацию по всем взятым в прокат книгам пользователя", "Получить информацию по всем взятым в прокат книгам пользователя")]
     [SwaggerResponse(statusCode: 200, type: typeof(List<BookReservationResponse>), description: "Информация по всем взятым в прокат книгам")]
     [SwaggerResponse(statusCode: 500, type: typeof(ErrorResponse), description: "Ошибка на стороне сервера")]
-    public async Task<IActionResult> GetReservations([Required][FromHeader(Name = "X-User-Name")] string userName)
+    public async Task<IActionResult> GetReservations()
     {
         try
         {
+            var userName = _userService.GetUsername();
+            
+            if (userName is null)
+                return Unauthorized();
+            
             var userReservations = await _reservationServiceRequestClient.GetReservationsAsync(userName);
         
             if (userReservations.Count == 0)
@@ -89,9 +99,13 @@ public class ReservationController : ControllerBase
     [SwaggerResponse(statusCode: 200, type: typeof(TakeBookResponse), description: "Информация о бронировании")]
     [SwaggerResponse(statusCode: 400, type: typeof(ValidationErrorResponse), description: "Ошибка валидации данных")]
     [SwaggerResponse(statusCode: 500, type: typeof(ErrorResponse), description: "Ошибка на стороне сервера")]
-    public async Task<IActionResult> TakeBook([Required][FromHeader(Name = "X-User-Name")] string userName,
-        [Required][FromBody] TakeBookRequest request)
+    public async Task<IActionResult> TakeBook([Required][FromBody] TakeBookRequest request)
     {
+        var userName = _userService.GetUsername();
+            
+        if (userName is null)
+            return Unauthorized();
+        
         try
         {
             var bookWithLibrary = await _libraryServiceRequestClient.GetBookAsync(request.LibraryUid, request.BookUid);
@@ -183,11 +197,14 @@ public class ReservationController : ControllerBase
     [SwaggerResponse(statusCode: 500, type: typeof(ErrorResponse), description: "Ошибка на стороне сервера")]
     public async Task<IActionResult> ReturnBook(
         [Required][FromRoute] Guid reservationUid,
-        [Required][FromHeader(Name = "X-User-Name")] string userName,
         [Required][FromBody] ReturnBookRequest request)
     {
         try
         {
+            var userName = _userService.GetUsername();
+            
+            if (userName is null)
+                return Unauthorized();
             
             var penalty = 0;
             

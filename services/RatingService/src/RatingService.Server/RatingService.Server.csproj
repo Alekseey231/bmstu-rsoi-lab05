@@ -31,6 +31,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\..\Common\LibrarySystem.Helpers\LibrarySystem.Helpers.Auth\LibrarySystem.Helpers.Auth.csproj" />
       <ProjectReference Include="..\Database\RatingService.Database.Context\RatingService.Database.Context.csproj" />
       <ProjectReference Include="..\Database\RatingService.Database.Repositories\RatingService.Database.Repositories.csproj" />
       <ProjectReference Include="..\Dto\RatingService.Dto.Http\RatingService.Dto.Http.csproj" />

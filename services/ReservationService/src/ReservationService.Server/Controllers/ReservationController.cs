@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ReservationService.Core.Interfaces;
 using ReservationService.Dto.Http;
@@ -12,6 +13,7 @@ namespace ReservationService.Server.Controllers;
 
 [ApiController]
 [Route("/api/v1/reservations")]
+[Authorize]
 public class ReservationController : ControllerBase
 {
     private readonly IReservationService _reservationService;

@@ -28,6 +28,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RatingService.Services.Rati
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RatingService.Services.DataInitializer", "Services\RatingService.Services.DataInitializer\RatingService.Services.DataInitializer.csproj", "{69BC05D4-1D4C-449C-8F96-60824C5CBAE2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibrarySystem.Helpers.Auth", "..\..\Common\LibrarySystem.Helpers\LibrarySystem.Helpers.Auth\LibrarySystem.Helpers.Auth.csproj", "{99B42994-5E7C-4092-9E3D-C8AA3FAEC7E7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,6 +76,10 @@ Global
 		{69BC05D4-1D4C-449C-8F96-60824C5CBAE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69BC05D4-1D4C-449C-8F96-60824C5CBAE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{69BC05D4-1D4C-449C-8F96-60824C5CBAE2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99B42994-5E7C-4092-9E3D-C8AA3FAEC7E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99B42994-5E7C-4092-9E3D-C8AA3FAEC7E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99B42994-5E7C-4092-9E3D-C8AA3FAEC7E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99B42994-5E7C-4092-9E3D-C8AA3FAEC7E7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{37E153E9-00EF-4B20-B08A-7738037118A3} = {6D95C5B4-CD48-4805-AEBC-516F053DFE75}

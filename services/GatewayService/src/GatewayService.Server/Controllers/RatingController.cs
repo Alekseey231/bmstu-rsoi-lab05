@@ -1,10 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 using System.Net;
-using System.Net.Sockets;
 using GatewayService.Clients;
 using GatewayService.Dto.Http;
 using GatewayService.Dto.Http.Converters;
 using GatewayService.Services.CircuitBreaker.Exceptions;
+using LibrarySystem.Helpers.Auth.Services;
 using Microsoft.AspNetCore.Mvc;
 using Refit;
 using Swashbuckle.AspNetCore.Annotations;
@@ -13,13 +13,18 @@ namespace GatewayService.Server.Controllers;
 
 [ApiController]
 [Route("/api/v1/rating")]
+[Microsoft.AspNetCore.Authorization.Authorize]
 public class RatingController : ControllerBase
 {
     private readonly IRatingServiceClient _ratingServiceRequestClient;
+    private readonly IUserService _userService;
     private readonly ILogger<RatingController> _logger;
 
-    public RatingController(IRatingServiceClient ratingServiceRequestClient, ILogger<RatingController> logger)
+    public RatingController(IRatingServiceClient ratingServiceRequestClient, 
+        IUserService userService,
+        ILogger<RatingController> logger)
     {
+        _userService = userService;
         _ratingServiceRequestClient = ratingServiceRequestClient;
         _logger = logger;
     }
@@ -28,10 +33,15 @@ public class RatingController : ControllerBase
     [SwaggerOperation("Получить рейтинг пользователя", "Получить рейтинг пользователя")]
     [SwaggerResponse(statusCode: 200, type: typeof(UserRatingResponse), description: "Рейтинг пользователя")]
     [SwaggerResponse(statusCode: 500, type: typeof(ErrorResponse), description: "Ошибка на стороне сервера")]
-    public async Task<IActionResult> GetUserRating([Required][FromHeader(Name = "X-User-Name")] string userName)
+    public async Task<IActionResult> GetUserRating()
     {
         try
         {
+            var userName = _userService.GetUsername();
+            
+            if (userName is null)
+                return Unauthorized();
+            
             var rating = await _ratingServiceRequestClient.GetRatingAsync(userName);
 
             var dtoRating = RatingConverter.Convert(rating);

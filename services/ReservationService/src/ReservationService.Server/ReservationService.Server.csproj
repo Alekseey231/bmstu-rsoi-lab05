@@ -31,6 +31,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\..\Common\LibrarySystem.Helpers\LibrarySystem.Helpers.Auth\LibrarySystem.Helpers.Auth.csproj" />
       <ProjectReference Include="..\Database\ReservationService.Database.Context\ReservationService.Database.Context.csproj" />
       <ProjectReference Include="..\Database\ReservationService.Database.Repositories\ReservationService.Database.Repositories.csproj" />
       <ProjectReference Include="..\Dto\ReservationService.Dto.Http\ReservationService.Dto.Http.csproj" />

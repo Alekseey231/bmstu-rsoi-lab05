@@ -28,14 +28,17 @@ public static class RefitServiceCollectionExtensions
         
         services.AddRefitClient<ILibraryServiceClient>()
             .ConfigureHttpClient(c => c.BaseAddress = new Uri(httpConfig.LibraryServiceUrl))
+            .AddHttpMessageHandler<JwtTokenHandler>()
             .AddHttpMessageHandler(sp => CreateHandler(sp, "LibraryService", cbConfig));
 
         services.AddRefitClient<IRatingServiceClient>()
             .ConfigureHttpClient(c => c.BaseAddress = new Uri(httpConfig.RatingServiceUrl))
+            .AddHttpMessageHandler<JwtTokenHandler>()
             .AddHttpMessageHandler(sp => CreateHandler(sp, "RatingService", cbConfig));
 
         services.AddRefitClient<IReservationServiceClient>()
             .ConfigureHttpClient(c => c.BaseAddress = new Uri(httpConfig.ReservationServiceUrl))
+            .AddHttpMessageHandler<JwtTokenHandler>()
             .AddHttpMessageHandler(sp => CreateHandler(sp, "ReservationService", cbConfig));
 
         return services;

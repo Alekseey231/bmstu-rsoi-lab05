@@ -28,7 +28,7 @@ services:
     container_name: reservation-service
     restart: on-failure
     depends_on:
-      - database
+      - postgres
     ports:
       - "8070:8070"
 
@@ -37,7 +37,7 @@ services:
     container_name: library-service
     restart: on-failure
     depends_on:
-      - database
+      - postgres
     ports:
       - "8060:8060"
 
@@ -46,7 +46,7 @@ services:
     container_name: rating-service
     restart: on-failure
     depends_on:
-      - database
+      - postgres
     ports:
       - "8050:8050"
 

@@ -1,4 +1,6 @@
 using System.ComponentModel.DataAnnotations;
+using LibrarySystem.Helpers.Auth.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RatingService.Core.Interfaces;
 using RatingService.Dto.Http;
@@ -11,15 +13,19 @@ namespace RatingService.Server.Controllers;
 
 [ApiController]
 [Route("/api/v1/rating")]
+[Authorize]
 public class RatingController : ControllerBase
 {
     private readonly IRatingService _ratingService;
+    private readonly IUserService _userService;
     private readonly ILogger<RatingController> _logger;
 
     public RatingController(IRatingService ratingService, 
+        IUserService userService,
         ILogger<RatingController> logger)
     {
         _ratingService = ratingService;
+        _userService = userService;
         _logger = logger;
     }
 
@@ -32,14 +38,12 @@ public class RatingController : ControllerBase
     {
         try
         {
-            if (!Request.Headers.TryGetValue("X-User-Name", out var userNameHeader) || 
-                string.IsNullOrEmpty(userNameHeader))
-            {
-                return BadRequest("Header X-User-Name is required");
-            }
-
-            var userName = userNameHeader.ToString();
-            var result = await _ratingService.GetRatingByUserNameAsync(userName);
+            var username = _userService.GetUsername();
+            
+            if (username is null)
+                return BadRequest("username is required");
+            
+            var result = await _ratingService.GetRatingByUserNameAsync(username);
             
             var dtoRating = RatingConverter.Convert(result);
             
@@ -62,14 +66,12 @@ public class RatingController : ControllerBase
     {
         try
         {
-            if (!Request.Headers.TryGetValue("X-User-Name", out var userNameHeader) || 
-                string.IsNullOrEmpty(userNameHeader))
-            {
-                return BadRequest("Header X-User-Name is required");
-            }
+            var username = _userService.GetUsername();
+            
+            if (username is null)
+                return BadRequest("username is required");
 
-            var userName = userNameHeader.ToString();
-            var result = await _ratingService.UpdateRatingAsync(userName, request.Stars);
+            var result = await _ratingService.UpdateRatingAsync(username, request.Stars);
             
             var dtoRating = RatingConverter.Convert(result);
             

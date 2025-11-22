@@ -3,6 +3,8 @@ using GatewayService.Clients;
 using GatewayService.Dto.Http;
 using GatewayService.Dto.Http.Converters;
 using GatewayService.Services.CircuitBreaker.Exceptions;
+using LibrarySystem.Helpers.Auth.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -10,14 +12,19 @@ namespace GatewayService.Server.Controllers;
 
 [ApiController]
 [Route("/api/v1/libraries")]
+[Authorize]
 public class LibraryController : ControllerBase
 {
     private readonly ILibraryServiceClient _libraryServiceRequestClient;
+    private readonly IUserService _userService;
     private readonly ILogger<LibraryController> _logger;
 
-    public LibraryController(ILibraryServiceClient libraryServiceRequestClient, ILogger<LibraryController> logger)
+    public LibraryController(ILibraryServiceClient libraryServiceRequestClient, 
+        IUserService userService,
+        ILogger<LibraryController> logger)
     {
         _libraryServiceRequestClient = libraryServiceRequestClient;
+        _userService = userService;
         _logger = logger;
     }
 
@@ -31,9 +38,15 @@ public class LibraryController : ControllerBase
     {
         try
         {
+            var username = _userService.GetUsername();
+            
+            _logger.LogDebug("User {Username} requesting libraries in city {City}", username, city);
+            
             var libraries = await _libraryServiceRequestClient.GetLibrariesAsync(city, page, size);
 
             var dtoLibraries = LibraryResponseConverter.Convert(libraries);
+            
+            _logger.LogInformation("User {Username} successfully got {Count} libraries in city {City}", username, libraries.Items.Count, city);
 
             return Ok(dtoLibraries);
         }

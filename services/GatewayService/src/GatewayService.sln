@@ -32,6 +32,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GatewayService.Services.Req
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GatewayService.Clients", "Clients\GatewayService.Clients\GatewayService.Clients.csproj", "{7528D83A-E439-44F7-8934-979C3267FE9A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibrarySystem.Helpers.Auth", "..\..\Common\LibrarySystem.Helpers\LibrarySystem.Helpers.Auth\LibrarySystem.Helpers.Auth.csproj", "{5DD1FBF5-EFB2-4645-95C1-CEA3D7461756}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GatewayService.Services.KeycloakAuthService", "Services\GatewayService.Services.KeycloakAuthService\GatewayService.Services.KeycloakAuthService.csproj", "{BAB3EFD8-BE0F-443C-A8AC-5D94AF80EF4E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -86,6 +90,14 @@ Global
 		{7528D83A-E439-44F7-8934-979C3267FE9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7528D83A-E439-44F7-8934-979C3267FE9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7528D83A-E439-44F7-8934-979C3267FE9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5DD1FBF5-EFB2-4645-95C1-CEA3D7461756}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DD1FBF5-EFB2-4645-95C1-CEA3D7461756}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DD1FBF5-EFB2-4645-95C1-CEA3D7461756}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DD1FBF5-EFB2-4645-95C1-CEA3D7461756}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BAB3EFD8-BE0F-443C-A8AC-5D94AF80EF4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BAB3EFD8-BE0F-443C-A8AC-5D94AF80EF4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BAB3EFD8-BE0F-443C-A8AC-5D94AF80EF4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BAB3EFD8-BE0F-443C-A8AC-5D94AF80EF4E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{DDF7F2FC-6219-4F17-98C3-7F997B801DC4} = {C662EC8E-7965-49EB-98B0-BE02C7C1716C}
@@ -98,5 +110,6 @@ Global
 		{21E9A0D2-A762-42BD-BA75-CC852D77DF69} = {A229C69F-48B1-4AED-8BB8-852520666AEA}
 		{70FC072B-66B5-4142-9472-94FCDFA433F4} = {21E9A0D2-A762-42BD-BA75-CC852D77DF69}
 		{7528D83A-E439-44F7-8934-979C3267FE9A} = {3623704A-F10D-4670-8ED3-373494692FD9}
+		{BAB3EFD8-BE0F-443C-A8AC-5D94AF80EF4E} = {A229C69F-48B1-4AED-8BB8-852520666AEA}
 	EndGlobalSection
 EndGlobal

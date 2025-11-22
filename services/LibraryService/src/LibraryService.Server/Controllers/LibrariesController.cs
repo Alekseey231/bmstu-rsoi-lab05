@@ -8,12 +8,14 @@ using LibraryService.Dto.Http.Models;
 using LibraryService.Dto.Http.Models.Enums;
 using LibraryService.Server.Converters;
 using LibraryService.Server.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace LibraryService.Server.Controllers;
 
 [ApiController]
 [Route("/api/v1/libraries")]
+[Authorize]
 public class LibrariesController : ControllerBase
 {
     private readonly ILibraryService _libraryService;

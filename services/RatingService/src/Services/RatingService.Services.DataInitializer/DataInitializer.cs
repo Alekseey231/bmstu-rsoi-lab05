@@ -18,7 +18,7 @@ public class DataInitializer : IDataInitializer
     {
         try
         {
-            var rating = new Rating("Test Max", 75);
+            var rating = new Rating("testuser", 75);
         
             await _context.Rating.AddAsync(rating);
             await _context.SaveChangesAsync();
