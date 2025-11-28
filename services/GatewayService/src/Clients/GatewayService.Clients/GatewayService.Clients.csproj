@@ -14,6 +14,7 @@
       <ProjectReference Include="..\..\..\..\LibraryService\src\Dto\LibraryService.Dto.Http\LibraryService.Dto.Http.csproj" />
       <ProjectReference Include="..\..\..\..\RatingService\src\Dto\RatingService.Dto.Http\RatingService.Dto.Http.csproj" />
       <ProjectReference Include="..\..\..\..\ReservationService\src\Dto\ReservationService.Dto.Http\ReservationService.Dto.Http.csproj" />
+      <ProjectReference Include="..\..\Dto\GatewayService.Dto.Http\GatewayService.Dto.Http.csproj" />
     </ItemGroup>
 
 </Project>

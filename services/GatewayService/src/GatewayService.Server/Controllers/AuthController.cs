@@ -1,5 +1,5 @@
+using GatewayService.Dto.Http;
 using GatewayService.Services.KeycloakAuthService;
-using LibraryService.Dto.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

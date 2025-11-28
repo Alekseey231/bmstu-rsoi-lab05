@@ -30,19 +30,20 @@ public class Startup
         services.AddSwaggerGen(c =>
         {
             c.SwaggerDoc("v1", new OpenApiInfo { Title = "RatingService.Server", Version = "v1" });
-            
+    
             var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
-
+    
             c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
-                Description = "JWT Authorization header using the Bearer scheme. Enter 'Bearer' [space] and then your token in the text input below.",
+                Description = "JWT Authorization header using the Bearer scheme.",
                 Name = "Authorization",
                 In = ParameterLocation.Header,
-                Type = SecuritySchemeType.ApiKey,
-                Scheme = "Bearer"
+                Type = SecuritySchemeType.Http,
+                Scheme = "bearer",
+                BearerFormat = "JWT"
             });
-            
+    
             c.AddSecurityRequirement(new OpenApiSecurityRequirement
             {
                 {
@@ -52,15 +53,13 @@ public class Startup
                         {
                             Type = ReferenceType.SecurityScheme,
                             Id = "Bearer"
-                        },
-                        Scheme = "oauth2",
-                        Name = "Bearer",
-                        In = ParameterLocation.Header
+                        }
                     },
-                    new List<string>()
+                    Array.Empty<string>()
                 }
             });
         });
+
         services.AddSwaggerGenNewtonsoftSupport();
         
         services.AddDbContext(Configuration);

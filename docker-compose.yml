@@ -8,9 +8,6 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: "postgres"
       POSTGRES_DB: postgres
-    volumes:
-      - db-data:/var/lib/postgresql/data
-      - ./postgres/:/docker-entrypoint-initdb.d/
     ports:
       - "5432:5432"
 
@@ -22,6 +19,11 @@ services:
       - postgres
     ports:
       - "8080:8080"
+    volumes:
+      - ./configs/gateway-service/appsettings.json:/app/appsettings.json
+    environment:
+      - INIT_DATABASE=true
+      - ASPNETCORE_ENVIRONMENT=Production
 
   reservation-service:
     image: xom4ik/rsoi-reservation-service:latest
@@ -31,6 +33,11 @@ services:
       - postgres
     ports:
       - "8070:8070"
+    volumes:
+      - ./configs/reservation-service/appsettings.json:/app/appsettings.json
+    environment:
+      - INIT_DATABASE=true
+      - ASPNETCORE_ENVIRONMENT=Production
 
   library-service:
     image: xom4ik/rsoi-library-service:latest
@@ -40,6 +47,11 @@ services:
       - postgres
     ports:
       - "8060:8060"
+    volumes:
+      - ./configs/library-service/appsettings.json:/app/appsettings.json
+    environment:
+      - INIT_DATABASE=true
+      - ASPNETCORE_ENVIRONMENT=Production
 
   rating-service:
     image: xom4ik/rsoi-rating-service:latest
@@ -49,6 +61,10 @@ services:
       - postgres
     ports:
       - "8050:8050"
-
+    volumes:
+      - ./configs/rating-service/appsettings.json:/app/appsettings.json
+    environment:
+      - INIT_DATABASE=true
+      - ASPNETCORE_ENVIRONMENT=Production
 volumes:
   db-data:

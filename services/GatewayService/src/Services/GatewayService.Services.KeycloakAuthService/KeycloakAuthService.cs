@@ -1,4 +1,5 @@
 ﻿using GatewayService.Clients;
+using GatewayService.Dto.Http;
 using LibraryService.Dto.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;

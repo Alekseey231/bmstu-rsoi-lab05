@@ -1,8 +1,4 @@
-using System.ComponentModel.DataAnnotations;
-using System.Runtime.Serialization;
-using Newtonsoft.Json;
-
-namespace LibraryService.Dto.Http;
+namespace GatewayService.Dto.Http;
 
 public class AuthorizeRequest
 {

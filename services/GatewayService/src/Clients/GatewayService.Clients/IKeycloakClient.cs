@@ -1,3 +1,4 @@
+using GatewayService.Dto.Http;
 using LibraryService.Dto.Http;
 using Refit;
 

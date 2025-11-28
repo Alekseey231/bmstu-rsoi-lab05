@@ -7,7 +7,6 @@ namespace LibrarySystem.Helpers.Auth.Extensions;
 
 public static class JwtAuthenticationExtensions
 {
-    //TODO: свой класс под конфигурацию
     public static IServiceCollection AddKeycloakAuthentication(
         this IServiceCollection services,
         IConfiguration configuration)
